@@ -1,0 +1,35 @@
+#!/bin/sh
+# physical_interfaces_by_mac.fact: Lists local physical interfaces by their address
+# Copyright (C) 2024 Michael Wodniok / WorNet AG
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+PATH=/bin:/usr/bin
+
+echo -n '{'
+first=1
+for device_link in /sys/class/net/*
+do
+	if [ -e "${device_link}/device" ] && [ -f "${device_link}/address" ]
+	then
+		if [ "$first" -ne 0 ]
+		then
+			first=0
+		else
+			echo -n ','
+		fi
+		echo -n '"'"$(cat "${device_link}/address" | sed -r -e 's/[^0-9a-fA-F:]//g')"'":"'"$(basename "$device_link")"'"'
+	fi
+done
+echo -n '}'

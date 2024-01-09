@@ -1,0 +1,10 @@
+# This file is part of Ansible Role simply42.ip_link_interface
+# 
+# ip_link_interface_by_mac:
+# mapping of interface mac to wished name
+# example:
+# ```
+# ip_link_interface:
+#   3a:ca:dd:7e:55:00: eth0
+# ```
+ip_link_interface_by_mac: {}

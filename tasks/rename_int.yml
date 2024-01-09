@@ -1,0 +1,54 @@
+# rename_int.yml: Do actual rename for an interface
+# Copyright (C) 2024 Michael Wodniok / WorNet AG
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+- name: set link {{ ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key] }} down for rename 
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/ip
+      - link
+      - set
+      - dev
+      - "{{ ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key] }}"
+      - down
+  become: true
+  when: item.value != ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key]
+
+- name: rename link {{ ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key] }} to {{ item.value }}
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/ip
+      - link
+      - set
+      - dev
+      - "{{ ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key] }}"
+      - name
+      - "{{ item.value }}"
+  become: true
+  when: item.value != ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key]
+
+- name: set link {{ item.value }} up
+  ansible.builtin.command:
+    argv:
+      - /usr/bin/ip
+      - link
+      - set
+      - dev
+      - "{{ item.value }}"
+      - up
+  become: true
+  when: item.value != ansible_facts['ansible_local']['physical_interfaces_by_mac'][item.key]
+  
+

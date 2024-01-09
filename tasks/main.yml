@@ -1,0 +1,28 @@
+# main.yml: General module for renaming interfaces using ip
+# Copyright (C) 2024 Michael Wodniok / WorNet AG
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+- name: install iproute2
+  ansible.builtin.include_tasks:
+    file: packages.yml
+
+- name: install custom facts
+  ansible.builtin.include_tasks:
+    file: facts.yml
+
+- name: rename interfaces by mac
+  ansible.builtin.include_tasks:
+    file: rename_int.yml
+  loop: "{{ ip_link_interface_by_mac | dict2items }}"
